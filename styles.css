@@ -238,7 +238,9 @@ input::placeholder {
 .primary-action,
 .secondary-action,
 .result-actions button,
-.copy-history {
+.copy-history,
+.result-actions a,
+.qr-history {
   min-height: 44px;
   border-radius: var(--radius);
   font-weight: 800;
@@ -257,7 +259,8 @@ input::placeholder {
 
 .primary-action:hover,
 .result-actions button:first-child:hover,
-.copy-history:hover {
+.copy-history:hover,
+.qr-history:hover {
   background: var(--button-strong);
   transform: translateY(-1px);
 }
@@ -333,20 +336,62 @@ input::placeholder {
 
 .result-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .result-actions button:first-child,
-.copy-history {
+.copy-history,
+.qr-history {
   background: var(--button);
   color: #fff;
 }
 
-.result-actions button:last-child,
-.secondary-action {
+.result-actions button:nth-child(2),
+.secondary-action,
+.result-actions a {
   background: var(--button-soft);
   color: var(--accent-strong);
+}
+
+.result-actions a,
+.qr-history {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  text-decoration: none;
+}
+
+.qr-preview {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.qr-preview img {
+  display: block;
+  width: 108px;
+  height: 108px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.qr-preview strong,
+.qr-preview span {
+  display: block;
+}
+
+.qr-preview span {
+  margin-top: 6px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 dl {
@@ -453,6 +498,10 @@ dd {
   padding: 0 14px;
 }
 
+.qr-history {
+  min-width: 54px;
+}
+
 .toast {
   position: fixed;
   right: 24px;
@@ -546,7 +595,13 @@ dd {
   }
 
   dl,
-  .result-actions {
+  .result-actions,
+  .qr-preview {
     grid-template-columns: 1fr;
+  }
+
+  .qr-preview img {
+    width: 128px;
+    height: 128px;
   }
 }

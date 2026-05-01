@@ -14,6 +14,8 @@ const aliasValue = document.querySelector("#aliasValue");
 const createdValue = document.querySelector("#createdValue");
 const copyButton = document.querySelector("#copyButton");
 const openButton = document.querySelector("#openButton");
+const qrImage = document.querySelector("#qrImage");
+const qrDownloadButton = document.querySelector("#qrDownloadButton");
 const historyList = document.querySelector("#historyList");
 const historyTemplate = document.querySelector("#historyItemTemplate");
 const totalLinks = document.querySelector("#totalLinks");
@@ -165,6 +167,10 @@ function renderResult(link) {
   const displayShortUrl = link.shortUrl;
   shortUrl.textContent = displayShortUrl;
   shortUrl.href = displayShortUrl;
+  qrImage.src = getQrUrl(link);
+  qrImage.alt = `QR code for ${displayShortUrl}`;
+  qrDownloadButton.href = getQrUrl(link, true);
+  qrDownloadButton.download = `swiftlink-${link.alias}.png`;
   aliasValue.textContent = link.alias;
   createdValue.textContent = formatDate(link.createdAt);
 }
@@ -187,6 +193,7 @@ function renderHistory() {
     const historyLong = item.querySelector(".history-long");
     const clickCount = item.querySelector(".click-count");
     const copyHistory = item.querySelector(".copy-history");
+    const qrHistory = item.querySelector(".qr-history");
 
     const displayShortUrl = link.shortUrl;
     historyShort.textContent = displayShortUrl;
@@ -195,6 +202,8 @@ function renderHistory() {
     historyLong.title = link.longUrl;
     clickCount.textContent = `${link.clicks} ${link.clicks === 1 ? "open" : "opens"}`;
     copyHistory.addEventListener("click", () => copyToClipboard(displayShortUrl, copyHistory));
+    qrHistory.href = getQrUrl(link, true);
+    qrHistory.download = `swiftlink-${link.alias}.png`;
 
     historyList.append(item);
   });
@@ -229,14 +238,31 @@ function loadLinks() {
 }
 
 function normalizeLink(link) {
+  const alias = link.alias || link.code;
+
   return {
     id: link.id,
-    alias: link.alias || link.code,
+    alias,
     longUrl: link.longUrl,
-    shortUrl: link.shortUrl,
+    shortUrl: link.shortUrl || `${window.location.origin}/${encodeURIComponent(alias)}`,
+    qrUrl: link.qrUrl,
+    qrDownloadUrl: link.qrDownloadUrl,
     clicks: link.clicks || 0,
     createdAt: link.createdAt,
   };
+}
+
+function getQrUrl(link, download = false) {
+  if (download && link.qrDownloadUrl) {
+    return link.qrDownloadUrl;
+  }
+
+  if (!download && link.qrUrl) {
+    return link.qrUrl;
+  }
+
+  const code = encodeURIComponent(link.alias || link.code);
+  return `${window.location.origin}/api/qr/${code}${download ? "?download=1" : ""}`;
 }
 
 function saveLinks() {

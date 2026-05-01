@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
 const { randomInt, randomUUID } = require("crypto");
+const QRCode = require("qrcode");
 
 const PORT = Number(process.env.PORT || 3000);
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
@@ -52,6 +53,11 @@ async function handleRequest(request, response) {
     return;
   }
 
+  if (request.method === "GET" && url.pathname.startsWith("/api/qr/")) {
+    await createQrCode(url, request, response);
+    return;
+  }
+
   if (request.method === "GET") {
     await redirectShortCode(url.pathname, response);
     return;
@@ -93,6 +99,42 @@ async function createShortLink(request, response) {
   links.unshift(link);
   await saveLinks();
   sendJson(response, 201, toClientLink(link, request));
+}
+
+async function createQrCode(url, request, response) {
+  const code = decodeURIComponent(url.pathname.replace(/^\/api\/qr\/+/, ""));
+
+  if (!/^[a-zA-Z0-9-]{4,5}$/.test(code)) {
+    sendJson(response, 404, { error: "QR code not found." });
+    return;
+  }
+
+  const link = links.find((item) => item.code.toLowerCase() === code.toLowerCase());
+
+  if (!link) {
+    sendJson(response, 404, { error: "QR code not found." });
+    return;
+  }
+
+  const shortUrl = toClientLink(link, request).shortUrl;
+  const image = await QRCode.toBuffer(shortUrl, {
+    type: "png",
+    errorCorrectionLevel: "M",
+    width: 512,
+    margin: 2,
+    color: {
+      dark: "#10251f",
+      light: "#ffffff",
+    },
+  });
+  const disposition = url.searchParams.has("download") ? "attachment" : "inline";
+
+  response.writeHead(200, {
+    "Content-Type": "image/png",
+    "Content-Disposition": `${disposition}; filename="swiftlink-${link.code}.png"`,
+    "Cache-Control": "no-store",
+  });
+  response.end(image);
 }
 
 async function redirectShortCode(pathname, response) {
@@ -151,12 +193,17 @@ async function readJsonBody(request) {
 }
 
 function toClientLink(link, request) {
+  const baseUrl = getBaseUrl(request);
+  const code = encodeURIComponent(link.code);
+
   return {
     id: link.id,
     alias: link.code,
     code: link.code,
     longUrl: link.longUrl,
-    shortUrl: `${getBaseUrl(request)}/${encodeURIComponent(link.code)}`,
+    shortUrl: `${baseUrl}/${code}`,
+    qrUrl: `${baseUrl}/api/qr/${code}`,
+    qrDownloadUrl: `${baseUrl}/api/qr/${code}?download=1`,
     clicks: link.clicks,
     createdAt: link.createdAt,
   };

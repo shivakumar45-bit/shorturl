@@ -85,6 +85,14 @@
             <div class="result-actions">
               <button type="button" id="copyButton">Copy</button>
               <button type="button" id="openButton">Open</button>
+              <a id="qrDownloadButton" href="#" download>Download QR</a>
+            </div>
+            <div class="qr-preview" aria-label="QR code for short URL">
+              <img id="qrImage" src="" alt="" />
+              <div>
+                <strong>QR code ready</strong>
+                <span>Scan to open the short link.</span>
+              </div>
             </div>
             <dl>
               <div>
@@ -122,6 +130,7 @@
         <div class="history-meta">
           <span class="click-count"></span>
           <button type="button" class="copy-history">Copy</button>
+          <a class="qr-history" href="#" download>QR</a>
         </div>
       </article>
     </template>
