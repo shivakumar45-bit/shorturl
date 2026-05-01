@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SwiftLink URL Shortener</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <span class="eyebrow">Real URL shortener</span>
+          <h1 id="page-title">Turn long links into clean, shareable short URLs.</h1>
+          <p>
+            Paste a long URL, choose an optional short code, and share a link that
+            redirects through this website.
+          </p>
+        </div>
+
+        <div class="stats" aria-label="Link stats">
+          <div>
+            <strong id="totalLinks">0</strong>
+            <span>links made</span>
+          </div>
+          <div>
+            <strong id="totalClicks">0</strong>
+            <span>tracked opens</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Shorten a URL">
+        <form class="shortener" id="shortenerForm" novalidate>
+          <div class="field">
+            <label for="longUrl">Long URL</label>
+            <div class="input-wrap">
+              <input
+                id="longUrl"
+                name="longUrl"
+                type="url"
+                placeholder="https://example.com/really/long/link"
+                autocomplete="url"
+                required
+              />
+              <button type="button" class="icon-button" id="pasteButton" aria-label="Paste URL">
+                <span aria-hidden="true">↧</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="customAlias">Custom alias <span>optional</span></label>
+            <div class="alias-row">
+              <span id="domainPrefix">swift.link/</span>
+              <input
+                id="customAlias"
+                name="customAlias"
+                type="text"
+                placeholder="x7k2"
+                autocomplete="off"
+                minlength="4"
+                maxlength="5"
+                pattern="[A-Za-z0-9-]{4,5}"
+                aria-describedby="aliasHelp"
+              />
+            </div>
+            <p id="aliasHelp">Use 4 to 5 letters, numbers, or hyphens.</p>
+          </div>
+
+          <button class="primary-action" type="submit">Shorten URL</button>
+          <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="result-panel" aria-label="Short URL result">
+          <div class="empty-result" id="emptyResult">
+            <div class="link-icon" aria-hidden="true">⌁</div>
+            <h2>Your short link will appear here</h2>
+            <p>Every link is saved on the server so other people can open it too.</p>
+          </div>
+
+          <div class="result" id="resultCard" hidden>
+            <span class="result-label">Short URL</span>
+            <a id="shortUrl" href="#" target="_blank" rel="noreferrer"></a>
+            <div class="result-actions">
+              <button type="button" id="copyButton">Copy</button>
+              <button type="button" id="openButton">Open</button>
+            </div>
+            <dl>
+              <div>
+                <dt>Alias</dt>
+                <dd id="aliasValue"></dd>
+              </div>
+              <div>
+                <dt>Created</dt>
+                <dd id="createdValue"></dd>
+              </div>
+            </dl>
+          </div>
+        </aside>
+      </section>
+
+      <section class="history-section" aria-labelledby="history-title">
+        <div class="section-heading">
+          <div>
+          <span class="eyebrow">Server backed</span>
+            <h2 id="history-title">Recent short links</h2>
+          </div>
+          <button type="button" class="secondary-action" id="clearButton">Clear all</button>
+        </div>
+
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </main>
+
+    <template id="historyItemTemplate">
+      <article class="history-item">
+        <div class="history-main">
+          <a class="history-short" href="#" target="_blank" rel="noreferrer"></a>
+          <p class="history-long"></p>
+        </div>
+        <div class="history-meta">
+          <span class="click-count"></span>
+          <button type="button" class="copy-history">Copy</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
