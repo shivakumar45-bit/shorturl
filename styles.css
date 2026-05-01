@@ -6,11 +6,12 @@
   --ink: #14212b;
   --muted: #61727f;
   --line: #d8e2ea;
-  --accent: #176b87;
-  --accent-strong: #104f65;
-  --mint: #9fe2bf;
-  --coral: #ff8a65;
-  --shadow: 0 22px 70px rgba(30, 55, 74, 0.15);
+  --accent: #0f766e;
+  --accent-strong: #115e59;
+  --button: #f97316;
+  --button-strong: #ea580c;
+  --button-soft: #fff4e8;
+  --shadow: 0 22px 70px rgba(8, 20, 30, 0.22);
   --radius: 8px;
 }
 
@@ -22,8 +23,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(135deg, rgba(159, 226, 191, 0.38), transparent 32%),
-    linear-gradient(315deg, rgba(255, 138, 101, 0.22), transparent 34%),
+    linear-gradient(120deg, rgba(5, 18, 28, 0.78), rgba(15, 118, 110, 0.54)),
+    url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=80")
+      center / cover fixed,
     var(--bg);
   color: var(--ink);
   font-family:
@@ -66,7 +68,7 @@ a {
 .eyebrow {
   display: inline-flex;
   margin-bottom: 12px;
-  color: var(--accent-strong);
+  color: var(--button);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -86,10 +88,15 @@ h1 {
   letter-spacing: 0;
 }
 
+.hero-copy h1 {
+  color: #ffffff;
+  text-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+}
+
 .hero p {
   max-width: 640px;
   margin-top: 18px;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.84);
   font-size: 1.1rem;
   line-height: 1.7;
 }
@@ -103,8 +110,8 @@ h1 {
 .stats div {
   min-height: 96px;
   padding: 18px;
-  background: rgba(255, 255, 255, 0.68);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: var(--radius);
   box-shadow: 0 14px 36px rgba(21, 48, 62, 0.08);
   backdrop-filter: blur(16px);
@@ -133,7 +140,7 @@ h1 {
 .shortener,
 .result-panel,
 .history-section {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.93);
   border: 1px solid rgba(255, 255, 255, 0.92);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -212,7 +219,7 @@ input::placeholder {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  color: var(--accent-strong);
+  color: var(--button-strong);
   font-size: 1.25rem;
 }
 
@@ -243,15 +250,15 @@ input::placeholder {
 
 .primary-action {
   min-height: 56px;
-  background: var(--accent);
+  background: var(--button);
   color: #fff;
-  box-shadow: 0 14px 28px rgba(23, 107, 135, 0.25);
+  box-shadow: 0 14px 28px rgba(249, 115, 22, 0.28);
 }
 
 .primary-action:hover,
 .result-actions button:first-child:hover,
 .copy-history:hover {
-  background: var(--accent-strong);
+  background: var(--button-strong);
   transform: translateY(-1px);
 }
 
@@ -332,13 +339,13 @@ input::placeholder {
 
 .result-actions button:first-child,
 .copy-history {
-  background: var(--accent);
+  background: var(--button);
   color: #fff;
 }
 
 .result-actions button:last-child,
 .secondary-action {
-  background: #edf3f6;
+  background: var(--button-soft);
   color: var(--accent-strong);
 }
 
@@ -446,6 +453,32 @@ dd {
   padding: 0 14px;
 }
 
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 14px 18px;
+  background: #10251f;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (max-width: 860px) {
   .app-shell {
     width: min(100% - 24px, 680px);
@@ -502,6 +535,14 @@ dd {
 
   .history-long {
     white-space: normal;
+  }
+
+  .toast {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    max-width: none;
+    text-align: center;
   }
 
   dl,

@@ -18,9 +18,11 @@ const historyList = document.querySelector("#historyList");
 const historyTemplate = document.querySelector("#historyItemTemplate");
 const totalLinks = document.querySelector("#totalLinks");
 const totalClicks = document.querySelector("#totalClicks");
+const copyToast = document.querySelector("#copyToast");
 
 let links = loadLinks();
 let activeLink = null;
+let toastTimeout = 0;
 
 domainPrefix.textContent = getDisplayPrefix();
 renderHistory();
@@ -90,7 +92,7 @@ pasteButton.addEventListener("click", async () => {
 
 copyButton.addEventListener("click", () => {
   if (activeLink) {
-    copyToClipboard(getShortUrl(activeLink), copyButton);
+    copyToClipboard(activeLink.shortUrl, copyButton);
   }
 });
 
@@ -208,6 +210,7 @@ async function copyToClipboard(value, button) {
     await navigator.clipboard.writeText(value);
     const originalText = button.textContent;
     button.textContent = "Copied";
+    showToast("Copied to clipboard");
     setTimeout(() => {
       button.textContent = originalText;
     }, 1400);
@@ -243,6 +246,15 @@ function saveLinks() {
 function showMessage(message, type) {
   formMessage.textContent = message;
   formMessage.className = `form-message ${type === "error" ? "error" : ""}`;
+}
+
+function showToast(message) {
+  copyToast.textContent = message;
+  copyToast.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    copyToast.classList.remove("show");
+  }, 1800);
 }
 
 function formatDate(value) {
