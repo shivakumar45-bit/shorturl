@@ -21,10 +21,12 @@ const historyTemplate = document.querySelector("#historyItemTemplate");
 const totalLinks = document.querySelector("#totalLinks");
 const totalClicks = document.querySelector("#totalClicks");
 const copyToast = document.querySelector("#copyToast");
+const installButton = document.querySelector("#installButton");
 
 let links = loadLinks();
 let activeLink = null;
 let toastTimeout = 0;
+let installPrompt = null;
 
 domainPrefix.textContent = getDisplayPrefix();
 renderHistory();
@@ -34,6 +36,24 @@ syncServerLinks();
 window.addEventListener("focus", () => {
   syncServerLinks();
 });
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  installButton.hidden = false;
+});
+
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  installButton.hidden = true;
+  showToast("App installed");
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+  });
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -120,6 +140,21 @@ clearButton.addEventListener("click", () => {
   resultCard.hidden = true;
   emptyResult.hidden = false;
   showMessage("Saved links cleared.", "success");
+});
+
+installButton.addEventListener("click", async () => {
+  if (!installPrompt) {
+    return;
+  }
+
+  installPrompt.prompt();
+  const result = await installPrompt.userChoice;
+  installPrompt = null;
+  installButton.hidden = true;
+
+  if (result.outcome === "accepted") {
+    showToast("App installed");
+  }
 });
 
 function normalizeUrl(value) {

@@ -236,6 +236,7 @@ input::placeholder {
 }
 
 .primary-action,
+.install-action,
 .secondary-action,
 .result-actions button,
 .copy-history,
@@ -256,7 +257,16 @@ input::placeholder {
   box-shadow: 0 14px 28px rgba(249, 115, 22, 0.28);
 }
 
+.install-action {
+  margin-top: 22px;
+  padding: 0 20px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--accent-strong);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
 .primary-action:hover,
+.install-action:hover,
 .result-actions button:first-child:hover,
 .copy-history:hover,
 .qr-history:hover {

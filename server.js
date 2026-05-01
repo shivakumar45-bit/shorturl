@@ -14,6 +14,10 @@ const STATIC_FILES = new Map([
   ["/index.html", "index.html"],
   ["/styles.css", "styles.css"],
   ["/app.js", "app.js"],
+  ["/manifest.json", "manifest.json"],
+  ["/service-worker.js", "service-worker.js"],
+  ["/icons/icon-192.png", path.join("icons", "icon-192.png")],
+  ["/icons/icon-512.png", path.join("icons", "icon-512.png")],
 ]);
 
 let links = [];
@@ -169,6 +173,8 @@ async function serveStatic(response, fileName, statusCode = 200) {
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".js": "application/javascript; charset=utf-8",
+    ".json": "application/manifest+json; charset=utf-8",
+    ".png": "image/png",
   };
 
   response.writeHead(statusCode, {

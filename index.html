@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="SwiftLink" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>SwiftLink URL Shortener</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -16,6 +24,9 @@
             Paste a long URL, choose an optional short code, and share a link that
             redirects through this website.
           </p>
+          <button type="button" class="install-action" id="installButton" hidden>
+            Install App
+          </button>
         </div>
 
         <div class="stats" aria-label="Link stats">
