@@ -245,7 +245,6 @@ input::placeholder {
   border-radius: var(--radius);
   font-weight: 800;
   transition:
-    transform 160ms ease,
     box-shadow 160ms ease,
     background 160ms ease;
 }
@@ -262,7 +261,6 @@ input::placeholder {
 .copy-history:hover,
 .qr-history:hover {
   background: var(--button-strong);
-  transform: translateY(-1px);
 }
 
 .form-message {

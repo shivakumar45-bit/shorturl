@@ -29,6 +29,11 @@ let toastTimeout = 0;
 domainPrefix.textContent = getDisplayPrefix();
 renderHistory();
 renderStats();
+syncServerLinks();
+
+window.addEventListener("focus", () => {
+  syncServerLinks();
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -100,7 +105,9 @@ copyButton.addEventListener("click", () => {
 
 openButton.addEventListener("click", () => {
   if (activeLink) {
+    recordOpen(activeLink.alias);
     window.open(activeLink.shortUrl, "_blank", "noopener,noreferrer");
+    setTimeout(syncServerLinks, 900);
   }
 });
 
@@ -167,6 +174,10 @@ function renderResult(link) {
   const displayShortUrl = link.shortUrl;
   shortUrl.textContent = displayShortUrl;
   shortUrl.href = displayShortUrl;
+  shortUrl.onclick = () => {
+    setTimeout(() => recordOpen(link.alias), 0);
+    setTimeout(syncServerLinks, 900);
+  };
   qrImage.src = getQrUrl(link);
   qrImage.alt = `QR code for ${displayShortUrl}`;
   qrDownloadButton.href = getQrUrl(link, true);
@@ -198,6 +209,10 @@ function renderHistory() {
     const displayShortUrl = link.shortUrl;
     historyShort.textContent = displayShortUrl;
     historyShort.href = displayShortUrl;
+    historyShort.addEventListener("click", () => {
+      setTimeout(() => recordOpen(link.alias), 0);
+      setTimeout(syncServerLinks, 900);
+    });
     historyLong.textContent = link.longUrl;
     historyLong.title = link.longUrl;
     clickCount.textContent = `${link.clicks} ${link.clicks === 1 ? "open" : "opens"}`;
@@ -212,6 +227,56 @@ function renderHistory() {
 function renderStats() {
   totalLinks.textContent = links.length.toString();
   totalClicks.textContent = links.reduce((sum, link) => sum + link.clicks, 0).toString();
+}
+
+function recordOpen(alias) {
+  const link = links.find((item) => item.alias === alias);
+
+  if (!link) {
+    return;
+  }
+
+  link.clicks += 1;
+  activeLink = activeLink?.alias === alias ? link : activeLink;
+  saveLinks();
+  renderHistory();
+  renderStats();
+}
+
+async function syncServerLinks() {
+  if (window.location.protocol === "file:") {
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/links");
+
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data.links)) {
+      return;
+    }
+
+    links = data.links.map(normalizeLink);
+    saveLinks();
+
+    if (activeLink) {
+      const updatedActiveLink = links.find((link) => link.alias === activeLink.alias);
+
+      if (updatedActiveLink) {
+        renderResult(updatedActiveLink);
+      }
+    }
+
+    renderHistory();
+    renderStats();
+  } catch {
+    // Keep showing locally saved links if the server is temporarily unreachable.
+  }
 }
 
 async function copyToClipboard(value, button) {
